@@ -26,5 +26,20 @@ int main()
   // lolo=lili;
   // printf("Lolo\n");
   // lolo.affichage();
+
+  Liste l;
+
+  std::cout << "Ajout en tete de 5 : " << std::endl;
+  l.ajoutEnTete(5);
+  l.affichage();
+
+  std::cout << "Ajout en tete de 2 : " << std::endl;
+  l.ajoutEnTete(2);
+  l.affichage();
+
+  std::cout << "Ajout en tete de 8 : " << std::endl;
+  l.ajoutEnTete(8);
+  l.affichage();
+
   return 0;
 }

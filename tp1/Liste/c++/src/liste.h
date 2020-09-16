@@ -4,6 +4,7 @@
 #define _LISTE
 
 #include "element.h" //offrant le type Elem
+#include <iostream>
 
 class Liste;
 
