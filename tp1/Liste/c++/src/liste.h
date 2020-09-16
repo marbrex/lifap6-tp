@@ -116,8 +116,10 @@ class Liste
     private :
         void ajoutEnQueueConnaissantUneCellule(const Elem & e, Cellule *c);
     void affichageDepuisCellule(const Cellule * c) const;
+
     //Donnees membres-----------------------------------------------------------
-        Cellule *ad;
+    Cellule *ad;
+    unsigned int count;
 };
 
 
