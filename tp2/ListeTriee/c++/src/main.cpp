@@ -37,8 +37,21 @@ int main()
   l.ajoutEnTete(99);
   l.affichage();
 
-  std::cout << "Ajout en tete de 98 : " << std::endl;
-  l.ajoutEnTete(98);
+  std::cout << "Ajout en tete de 97 : " << std::endl;
+  l.ajoutEnTete(97);
+  l.affichage();
+
+
+  std::cout << "Insertion de 101 : " << std::endl;
+  l.insere(101);
+  l.affichage();
+
+  std::cout << "Insertion de 96 : " << std::endl;
+  l.insere(96);
+  l.affichage();
+
+  std::cout << "Insertion de 98 : " << std::endl;
+  l.insere(98);
   l.affichage();
 
   return 0;

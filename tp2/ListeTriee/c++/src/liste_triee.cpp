@@ -3,7 +3,6 @@
 Liste::Liste() {
 	ad = new Cellule;
 	ad->suivant = nullptr;
-	ad->apres_suiv = nullptr;
 	count = 0;
 }
 
@@ -52,3 +51,55 @@ void Liste::affichage() const {
 }
 
 bool Liste::testVide() const { return count == 0; }
+
+void Liste::insere(const Elem &e) {
+	Cellule* current_address = ad->suivant;
+	Cellule* prev_address = ad;
+
+	if (testVide()) {
+		std::cout << "VIDE" << std::endl;
+
+		ad->suivant = new Cellule;
+		ad->suivant->info = e;
+		ad->suivant->suivant = nullptr;
+		ad->suivant->apres_suiv = nullptr;
+		++count;
+	}
+
+	while(current_address != nullptr) {
+		if (e <= current_address->info) {
+			std::cout << "<" << std::endl;
+
+			Cellule* temp = current_address;
+
+			current_address = new Cellule;
+			current_address->info = e;
+			current_address->suivant = temp;
+			current_address->apres_suiv = temp ? (temp->suivant ? temp->suivant : nullptr) : nullptr;
+			++count;
+
+			prev_address->suivant = current_address;
+
+			break;
+		}
+		else if (current_address->suivant == nullptr) {
+			std::cout << "MAX" << std::endl;
+
+			Cellule* temp = new Cellule;
+			temp->info = e;
+			temp->suivant = nullptr;
+			temp->apres_suiv = nullptr;
+			++count;
+
+			current_address->suivant = temp;
+
+			break;
+		}
+		else {
+			std::cout << "NEXT" << std::endl;
+
+			prev_address = current_address;
+			current_address = current_address->suivant;
+		}
+	}
+}
