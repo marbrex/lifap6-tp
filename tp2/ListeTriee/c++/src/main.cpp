@@ -58,5 +58,8 @@ int main()
   l.etablissementSecondNiveau();
   l.affichage();
 
+  std::cout << "Affichage Second Niveau : " << std::endl;
+  l.affichageSecondNiveau();
+
   return 0;
 }

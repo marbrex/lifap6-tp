@@ -59,6 +59,26 @@ void Liste::affichage() const {
 	}
 }
 
+void Liste::affichageSecondNiveau() const {
+	if (testVide()) {
+		std::cout << "La Liste est VIDE !" << std::endl;
+	}
+	else {
+		unsigned int i = 0;
+		Cellule* current_address = ad->apres_suiv;
+
+		while(current_address != nullptr) {
+			std::cout << i << ": " << std::endl;
+			std::cout << "	@: " << current_address << std::endl;
+			std::cout << "	info: " << current_address->info << std::endl;
+			std::cout << "	suivant 2nd niveau: " << current_address->apres_suiv << std::endl;
+
+			++i;
+			current_address = current_address->apres_suiv;
+		}
+	}
+}
+
 bool Liste::testVide() const { return count == 0; }
 
 void Liste::insere(const Elem &e) {
@@ -117,19 +137,21 @@ void Liste::insere(const Elem &e) {
 void Liste::etablissementSecondNiveau() {
 	if (ad->suivant) { // si la liste contient au moins une cellule
 		Cellule* current_address = ad->suivant;
+		ad->apres_suiv = current_address;
 
 		if (current_address->suivant) { // si la liste contient au moins 2 cellules
 			Cellule* next_address = current_address->suivant;
+			ad->apres_suiv = next_address;
 
-			while(next_address->suivant != nullptr) {
+			while(next_address->suivant != nullptr) { // au moins 3 cellules
 				current_address->apres_suiv = next_address->suivant;
 
 				current_address = next_address;
 				next_address = current_address->suivant;
 			}
-
-			second_link_lvl = true;
 		}
+
+		second_link_lvl = true;
 	}
 	//si la liste est vide, on fait rien
 }
