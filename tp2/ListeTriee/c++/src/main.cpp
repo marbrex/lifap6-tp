@@ -54,5 +54,9 @@ int main()
   l.insere(98);
   l.affichage();
 
+  std::cout << "Etablissement Second Niveau : " << std::endl;
+  l.etablissementSecondNiveau();
+  l.affichage();
+
   return 0;
 }
