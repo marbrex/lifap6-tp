@@ -119,6 +119,18 @@ class Liste
         void insere(const Elem &e);
         //Precondition : la liste est vide ou deja triee
         //Postcondition : e est insere, la liste est triee
+
+        void etablissementSecondNiveau();
+        //Precondition : la liste est vide ou chaque cellule a l'adresse de la suivante
+        //               sauf la derniere
+        //Postcondition : toute cellule a l'adresse de l'apres suivante
+        //                sauf les deux dernieres
+        //                (si une cellule dans la liste, alors le pointeur
+        //                de 2nd niveau de la cellule bidon contient l'adresse de la suivante)
+
+        void affichageSecondNiveau() const;
+        //Precondition : aucune
+        //Postcondition : Affichage exhaustif de tous les elements de second niveau de chainage
         
     private :
         void ajoutEnQueueConnaissantUneCellule(const Elem & e, Cellule *c);
@@ -127,6 +139,7 @@ class Liste
         //Donnees membres-----------------------------------------------------------
         Cellule *ad;
         unsigned int count;
+        bool second_link_lvl;
 };
 
 
