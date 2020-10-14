@@ -4,6 +4,7 @@
 typedef int Key;
 
 #include "element.h"
+#include <assert.h>
 
 class Table;
 
@@ -32,7 +33,7 @@ class Table {
 		unsigned int nb_elements;
 
 		unsigned int (*hash)(const Key&, unsigned int);
-		unsigned int (*hash_step)(Key, unsigned int);
+		unsigned int (*hash_step)(const Key&, unsigned int);
 
 	public:
 		Table(unsigned int size);

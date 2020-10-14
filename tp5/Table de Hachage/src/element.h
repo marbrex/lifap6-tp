@@ -1,8 +1,10 @@
 #ifndef _ELEMENT
 #define _ELEMENT
 
+typedef int Key;
+
 struct Element {
-	int key;
+	Key key;
 
 	void affiche() const;
 };
