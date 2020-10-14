@@ -1,9 +1,7 @@
 #ifndef _TABLE
 #define _TABLE
 
-typedef int Key;
-
-#include "element.h"
+#include "key.h"
 #include <assert.h>
 
 class Table;
@@ -12,15 +10,15 @@ class Case {
 	friend class Table;
 
 	private:
-		Element element;
+		Key key;
 		bool free;
 
 	public:
 		Case() : free(true) {}
-		Case(const Element& e) : element(e), free(false) {}
+		Case(const Key& k) : key(k), free(false) {}
 
-		void set(const Element& e) { element=e; free=false; }
-		Element get() const { return element; }
+		void set(const Key& k) { key=k; free=false; }
+		Key get() const { return key; }
 
 		bool isFree() const { return free; }
 };
@@ -39,7 +37,7 @@ class Table {
 		Table(unsigned int size);
 		~Table();
 
-		void add(const Element& e);
+		void add(const Key& e);
 		void remove(unsigned int hash_code);
 		void show() const;
 
