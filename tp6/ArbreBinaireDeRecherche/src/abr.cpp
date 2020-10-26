@@ -6,60 +6,84 @@
 ABR::ABR () {
 	head = nullptr;
 	count = 0;
-	deep = 0;
 }
 
 ABR::~ABR () {
 
 }
 
+Node* ABR::get_head() const { return head; }
+
 bool ABR::isEmpty() const { return count == 0; }
+
+unsigned int ABR::get_depth_from_node(Node* n, unsigned int depth_count) const {
+	if (n) {
+		++depth_count;
+
+		if (n->left && n->right) {
+			unsigned int left = get_depth_from_node(n->left, depth_count);
+			unsigned int right = get_depth_from_node(n->right, depth_count);
+
+			if (left > right) return left;
+			return right;
+		}
+		else {
+			if (n->left) return get_depth_from_node(n->left, depth_count);
+			if (n->right) return get_depth_from_node(n->right, depth_count);
+		}
+	}
+	return depth_count;
+}
+
+unsigned int ABR::get_depth() const { return get_depth_from_node(head, 0); }
 
 unsigned int ABR::draw_node(const Node* n, unsigned int length) const {
 	if (n) {
-		unsigned int mid;
-		if (length%2 == 0) mid = length/2;
-		else mid = length/2 +1;
+		unsigned int mid = length/2;
+		if (length%2 != 0) ++mid;
 
-		unsigned int left;
-		if (mid%2 == 0) left = mid/2;
-		else left = mid/2 +1;
+		unsigned int left = mid/2;
+		if (mid%2 != 0) ++left;
 
 		unsigned int right = mid+left;
 
-		unsigned int curr_col = 0;
-
 		// On dessine la ligne avec l'element n->element au milieu
-		for(++curr_col; curr_col<left; ++curr_col)
-			std::cout << " ";
-
-		if (n->left) {
-			std::cout << "┌";
-			for(++curr_col; curr_col<mid; ++curr_col) std::cout << "─";
-		}
-		else {
-			std::cout << " ";
-			for(++curr_col; curr_col<mid; ++curr_col)
+		unsigned int curr_col = 0;
+		// Si la longeur est 1, alors on est sur le dernier niveau
+		// => donc on n'affiche pas les espaces et fleches
+		if (length != 1) {
+			for(++curr_col; curr_col<left; ++curr_col)
 				std::cout << " ";
+
+			if (n->left) {
+				std::cout << "┌";
+				for(++curr_col; curr_col<mid; ++curr_col) std::cout << "─";
+			}
+			else {
+				for(; curr_col<mid; ++curr_col)
+					std::cout << " ";
+			}
 		}
 
 		std::cout << n->element;
 
-		if (n->right) {
-			for(++curr_col; curr_col<right; ++curr_col) std::cout << "─";
-			std::cout << "┐";
-		}
-		else {
-			for(++curr_col; curr_col<right; ++curr_col)
+		// Si la longeur est 1, alors on est sur le dernier niveau
+		// => donc on n'affiche pas les espaces et fleches
+		if (length != 1) {
+			if (n->right) {
+				for(++curr_col; curr_col<right; ++curr_col) std::cout << "─";
+				std::cout << "┐";
+			}
+			else {
+				for(; curr_col<right; ++curr_col)
+					std::cout << " ";
+			}
+
+			for(++curr_col; curr_col<=length; ++curr_col)
 				std::cout << " ";
-			std::cout << " ";
 		}
 
-		for(++curr_col; curr_col<=length; ++curr_col)
-			std::cout << " ";
-
-		// On retourne la valeur decrementee, car la derniere iteration de la boucle for avait l'incrementee
-		return --curr_col;
+		return length;
 	}
 	else {
 		unsigned int curr_col = 0;
@@ -67,54 +91,75 @@ unsigned int ABR::draw_node(const Node* n, unsigned int length) const {
 		for(++curr_col; curr_col<=length; ++curr_col)
 			std::cout << " ";
 
+		// On retourne la valeur decrementee, car la derniere iteration de la boucle for avait l'incrementee
 		return --curr_col;
 	}
 }
 
-void ABR::draw() const {
+void ABR::draw_from_node(const Node* n) const {
 	if (!isEmpty()) {
 
 		// On initialise les valeurs de depart pour construire le tableau d'affichage
-		unsigned int max_elems = pow(2,deep-1); // Nombre maximum d'elements sur le dernier niveau de l'ABR
+		unsigned int depth = get_depth();
+		unsigned int max_elems = pow(2,depth-1); // Nombre maximum d'elements sur le dernier niveau de l'ABR
 		unsigned int max_offset = max_elems-1; // Nombre d'espaces entre les noeuds sur le dernier niveau de l'ABR
 		unsigned int width = max_elems + max_offset; // Longeur de la grille d'affichage
 
-		std::cout << "deep : " << deep << std::endl;
-		std::cout << "max elements on last level : 2^(deep-1) = " << max_elems << std::endl << std::endl;
+		std::cout << "count : " << count << std::endl;
+		std::cout << "depth : " << depth << std::endl;
+		std::cout << "max elements on last level : 2^(depth-1) = " << max_elems << std::endl << std::endl;
 
 		// On dessine les noeuds selon la grille d'affichage
 		unsigned int curr_col = 0;
 		unsigned int tab_width = width;
 
 		std::queue<const Node*> q;
-		q.push(head);
+		q.push(n);
 
 		while (!q.empty()) {
+			// On dessine le noeud actuel et on sauvegarde la colonne ou on s'est arrete
 			curr_col += draw_node(q.front(), tab_width);
 
+			// On se prepare pour la prochaine iteration.
+			// Si le pointeur sur le noeud actuel n'est pas NULL, alors
 			if (q.front()) {
+				// Si le noeud actuel possede un fils gauche,
+				//  alors on enfile un pointeur vers son fils gauche
+				// sinon on enfile un pointeur null
 				if (q.front()->left) q.push(q.front()->left);
 				else q.push(nullptr);
 
+				// Si le noeud actuel possede un fils droit,
+				//  alors on enfile un pointeur vers son fils droit
+				// sinon on enfile un pointeur null
 				if (q.front()->right) q.push(q.front()->right);
 				else q.push(nullptr);
 			}
 
+			// On defile le pointeur vers le noeud actuel,
+			// car on en a plus besoin (deja dessine)
 			q.pop();
 
 			// std::cout << "curr_col: " << curr_col;
 			// std::cout << " tab_width: " << tab_width;
 			// std::cout << " width: " << width << std::endl;
 
+			// Si on a atteint la fin de la table d'affichage, alors
+			// on affiche un saut de ligne et on remet la colonne actuelle a 0,
+			// et on divise aussi la largeur de la ligne actuelle par 2.
 			if (curr_col >= width) {
 				std::cout << std::endl;
 				curr_col = 0;
-				tab_width/=2;
+				tab_width/=2; // Largeur de la prochaine ligne a dessiner sera 2 fois plus petite
 			}
+			// Si on a pas encore atteint la fin de la table d'affichage
 			else {
+				// Si la largeur de la ligne actuelle est impaire,
+				// on dessine un espace, car la colonne est represente par 'int'
+				// (ex. 15/7=2 => il nous manque un espace a dessiner)
 				if (tab_width%2 != 0) {
-					++curr_col;
 					std::cout << " ";
+					++curr_col;
 				}
 			}
 
@@ -126,6 +171,8 @@ void ABR::draw() const {
 	else std::cout << "ABR est vide !" << std::endl;
 }
 
+void ABR::draw() const { draw_from_node(head); }
+
 void ABR::insert_from_node (const Elem& e, Node*& n) {
 	if (n == nullptr) {
 		n = new Node;
@@ -136,11 +183,24 @@ void ABR::insert_from_node (const Elem& e, Node*& n) {
 		++count;
 	}
 	else {
-		if (!n->left && !n->right) ++deep;
-
-		if (e < n->element) insert_from_node(e, n->left);
-		else if (e > n->element) insert_from_node(e, n->right);
+		if (e != n->element) {
+			if (e < n->element) insert_from_node(e, n->left);
+			else insert_from_node(e, n->right);
+		}
 	}
 }
 
 void ABR::insert (const Elem& e) { insert_from_node(e, head); }
+
+Node* ABR::find_from_node(const Elem& e, Node* n) const {
+	if (n) {
+		if (e == n->element) return n;
+		else {
+			if (e < n->element) return find_from_node(e, n->left);
+			else return find_from_node(e, n->right);
+		}
+	}
+	return nullptr;
+}
+
+Node* ABR::find(const Elem& e) const { return find_from_node(e, head); }
