@@ -36,9 +36,15 @@ class ABR {
 		// Postcondition: Si l'ABR n'est pas vide, dessine l'ABR entier
 		//				  (parcours en largeur, cad niveau apres niveau)
 		//				  Si l'ABR est vide, alors affiche une chaine de caracteres
-		void draw() const;
+		void draw(bool extra=true) const;
 
-		void draw_from_node(const Node* n) const;
+		void draw_from_node(const Node* n, bool extra=true) const;
+
+		void parcours(void (*handler)(Node*), int mode=0);
+
+		void parcours_infix_from(Node* n, void (*handler)(Node*));
+		void parcours_prefix_from(Node* n, void (*handler)(Node*));
+		void parcours_postfix_from(Node* n, void (*handler)(Node*));
 
 		Node* find(const Elem& e) const;
 
@@ -46,5 +52,5 @@ class ABR {
 
 		unsigned int get_depth() const;
 
-		unsigned int get_depth_from_node(Node* n, unsigned int depth_count) const;
+		unsigned int get_depth_from_node(Node* n, unsigned int depth_count=0) const;
 };

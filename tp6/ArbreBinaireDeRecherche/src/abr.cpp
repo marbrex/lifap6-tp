@@ -3,6 +3,9 @@
 #include <cmath>
 #include <queue>
 
+// Fonction de traitement des noeuds par defaut (utilisee dans la fonction 'parcours')
+void list_elements(Node* n) { std::cout << n->element << " "; }
+
 ABR::ABR () {
 	head = nullptr;
 	count = 0;
@@ -35,7 +38,7 @@ unsigned int ABR::get_depth_from_node(Node* n, unsigned int depth_count) const {
 	return depth_count;
 }
 
-unsigned int ABR::get_depth() const { return get_depth_from_node(head, 0); }
+unsigned int ABR::get_depth() const { return get_depth_from_node(head); }
 
 unsigned int ABR::draw_node(const Node* n, unsigned int length) const {
 	if (n) {
@@ -96,7 +99,7 @@ unsigned int ABR::draw_node(const Node* n, unsigned int length) const {
 	}
 }
 
-void ABR::draw_from_node(const Node* n) const {
+void ABR::draw_from_node(const Node* n, bool extra) const {
 	if (!isEmpty()) {
 
 		// On initialise les valeurs de depart pour construire le tableau d'affichage
@@ -105,9 +108,11 @@ void ABR::draw_from_node(const Node* n) const {
 		unsigned int max_offset = max_elems-1; // Nombre d'espaces entre les noeuds sur le dernier niveau de l'ABR
 		unsigned int width = max_elems + max_offset; // Longeur de la grille d'affichage
 
-		std::cout << "count : " << count << std::endl;
-		std::cout << "depth : " << depth << std::endl;
-		std::cout << "max elements on last level : 2^(depth-1) = " << max_elems << std::endl << std::endl;
+		if (extra) {
+			std::cout << "Number of Elements         : " << count << std::endl;
+			std::cout << "Depth (Number of Levels)   : " << depth << std::endl;
+			std::cout << "Max Elements on Last Level : " << max_elems << std::endl << std::endl;
+		}
 
 		// On dessine les noeuds selon la grille d'affichage
 		unsigned int curr_col = 0;
@@ -171,7 +176,48 @@ void ABR::draw_from_node(const Node* n) const {
 	else std::cout << "ABR est vide !" << std::endl;
 }
 
-void ABR::draw() const { draw_from_node(head); }
+void ABR::draw(bool extra) const { draw_from_node(head, extra); }
+
+void ABR::parcours(void (*handler)(Node*)=list_elements, int mode) {
+	switch(mode) {
+		case 1: // Ordre PREFIX
+			parcours_prefix_from(head, handler);
+			std::cout << std::endl << std::endl;
+			break;
+		case 2: // Ordre POSTFIX
+			parcours_postfix_from(head, handler);
+			std::cout << std::endl << std::endl;
+			break;
+		default: // Ordre INFIX
+			parcours_infix_from(head, handler);
+			std::cout << std::endl << std::endl;
+			break;
+	}
+}
+
+void ABR::parcours_infix_from(Node* n, void (*handler)(Node*)=list_elements) {
+	if (n) {
+		parcours_infix_from(n->left, handler);
+		handler(n);
+		parcours_infix_from(n->right, handler);
+	}
+}
+
+void ABR::parcours_prefix_from(Node* n, void (*handler)(Node*)=list_elements) {
+	if (n) {
+		handler(n);
+		parcours_prefix_from(n->left, handler);
+		parcours_prefix_from(n->right, handler);
+	}
+}
+
+void ABR::parcours_postfix_from(Node* n, void (*handler)(Node*)=list_elements) {
+	if (n) {
+		parcours_postfix_from(n->left, handler);
+		parcours_postfix_from(n->right, handler);
+		handler(n);
+	}
+}
 
 void ABR::insert_from_node (const Elem& e, Node*& n) {
 	if (n == nullptr) {

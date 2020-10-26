@@ -2,6 +2,11 @@
 #include <queue>
 #include <iostream>
 
+void mult_by_two(Node* n) {
+    n->element*=2;
+    std::cout << n->element << " ";
+}
+
 int main() {
     ABR a;
 
@@ -14,18 +19,13 @@ int main() {
     a.insert(10);
     a.insert(5);
     a.insert(1);
-    a.insert(7);
     a.insert(11);
 
-    // a.insert(50);
-    // a.insert(60);
-    // a.insert(40);
-    // a.insert(30);
-    // a.insert(45);
-    // a.insert(55);
-    // a.insert(65);
-
     a.draw();
+
+    a.parcours(mult_by_two, 1);
+
+    a.draw(false);
 
     // a.draw_from_node(a.get_head()->right);
 
