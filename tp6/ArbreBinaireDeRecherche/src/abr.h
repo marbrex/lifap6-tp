@@ -1,4 +1,11 @@
+#ifndef _ABR
+#define _ABR
+
 #include "element.h"
+
+struct Node;
+// Fonction de traitement des noeuds par defaut (utilisee dans la fonction membre 'parcours')
+void list_elements(Node* n);
 
 struct Node {
 	Elem element;
@@ -40,11 +47,11 @@ class ABR {
 
 		void draw_from_node(const Node* n, bool extra=true) const;
 
-		void parcours(void (*handler)(Node*), int mode=0);
+		void parcours(void (*handler)(Node*)=list_elements, int mode=0);
 
-		void parcours_infix_from(Node* n, void (*handler)(Node*));
-		void parcours_prefix_from(Node* n, void (*handler)(Node*));
-		void parcours_postfix_from(Node* n, void (*handler)(Node*));
+		void parcours_infix_from(Node* n, void (*handler)(Node*)=list_elements);
+		void parcours_prefix_from(Node* n, void (*handler)(Node*)=list_elements);
+		void parcours_postfix_from(Node* n, void (*handler)(Node*)=list_elements);
 
 		Node* find(const Elem& e) const;
 
@@ -54,3 +61,5 @@ class ABR {
 
 		unsigned int get_depth_from_node(Node* n, unsigned int depth_count=0) const;
 };
+
+#endif

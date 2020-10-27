@@ -23,7 +23,7 @@ int main() {
 
     a.draw();
 
-    a.parcours(mult_by_two, 1);
+    a.parcours(mult_by_two);
 
     a.draw(false);
 

@@ -178,7 +178,7 @@ void ABR::draw_from_node(const Node* n, bool extra) const {
 
 void ABR::draw(bool extra) const { draw_from_node(head, extra); }
 
-void ABR::parcours(void (*handler)(Node*)=list_elements, int mode) {
+void ABR::parcours(void (*handler)(Node*), int mode) {
 	switch(mode) {
 		case 1: // Ordre PREFIX
 			parcours_prefix_from(head, handler);
@@ -195,7 +195,7 @@ void ABR::parcours(void (*handler)(Node*)=list_elements, int mode) {
 	}
 }
 
-void ABR::parcours_infix_from(Node* n, void (*handler)(Node*)=list_elements) {
+void ABR::parcours_infix_from(Node* n, void (*handler)(Node*)) {
 	if (n) {
 		parcours_infix_from(n->left, handler);
 		handler(n);
@@ -203,7 +203,7 @@ void ABR::parcours_infix_from(Node* n, void (*handler)(Node*)=list_elements) {
 	}
 }
 
-void ABR::parcours_prefix_from(Node* n, void (*handler)(Node*)=list_elements) {
+void ABR::parcours_prefix_from(Node* n, void (*handler)(Node*)) {
 	if (n) {
 		handler(n);
 		parcours_prefix_from(n->left, handler);
@@ -211,7 +211,7 @@ void ABR::parcours_prefix_from(Node* n, void (*handler)(Node*)=list_elements) {
 	}
 }
 
-void ABR::parcours_postfix_from(Node* n, void (*handler)(Node*)=list_elements) {
+void ABR::parcours_postfix_from(Node* n, void (*handler)(Node*)) {
 	if (n) {
 		parcours_postfix_from(n->left, handler);
 		parcours_postfix_from(n->right, handler);
