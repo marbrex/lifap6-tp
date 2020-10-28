@@ -4,16 +4,52 @@
 #include <queue>
 
 // Fonction de traitement des noeuds par defaut (utilisee dans la fonction 'parcours')
-void list_elements(Node* n) { std::cout << n->element << " "; }
+void ABR::list_elements(Node* n) { std::cout << n->element << " "; }
+
+void destruct(Node* n) {
+	delete n;
+	n = nullptr;
+}
 
 ABR::ABR () {
 	head = nullptr;
 	count = 0;
 }
 
-ABR::~ABR () {
+void ABR::copy_from_node(const Node* n) {
+	std::queue<const Node*> q;
+	q.push(n);
 
+	while (!q.empty()) {
+		this->insert(q.front()->element);
+
+		if (q.front()) {
+			if (q.front()->left) q.push(q.front()->left);
+			if (q.front()->right) q.push(q.front()->right);
+		}
+
+		q.pop();
+	}
 }
+
+ABR::ABR(const ABR& a) {
+	head = nullptr;
+	count = 0;
+	copy_from_node(a.head);
+}
+
+ABR& ABR::operator=(const ABR& a) {
+	if (this->isEmpty()) copy_from_node(a.head);
+	else {
+		this->parcours_postfix_from(head, destruct);
+		this->head = nullptr;
+		this->count = 0;
+		copy_from_node(a.head);
+	}
+	return *this;
+}
+
+ABR::~ABR () { parcours_postfix_from(head, destruct); }
 
 Node* ABR::get_head() const { return head; }
 
@@ -178,7 +214,7 @@ void ABR::draw_from_node(const Node* n, bool extra) const {
 
 void ABR::draw(bool extra) const { draw_from_node(head, extra); }
 
-void ABR::parcours(void (*handler)(Node*), int mode) {
+void ABR::parcours(int mode, void (*handler)(Node*)) {
 	switch(mode) {
 		case 1: // Ordre PREFIX
 			parcours_prefix_from(head, handler);
@@ -237,6 +273,82 @@ void ABR::insert_from_node (const Elem& e, Node*& n) {
 }
 
 void ABR::insert (const Elem& e) { insert_from_node(e, head); }
+
+Node* ABR::get_parent_from_node(const Elem& e, Node* n, Node* parent) const {
+	if (n) {
+		if (n->element == e) return parent;
+		else {
+			if (e < n->element) return get_parent_from_node(e, n->left, n);
+			else return get_parent_from_node(e, n->right, n);
+		}
+	}
+	return nullptr;
+}
+
+Node* ABR::get_parent(const Elem& e) const { return get_parent_from_node(e, head); }
+
+void ABR::remove(const Elem& e) {
+	Node* parent = get_parent(e);
+	Node* n = find(e);
+
+	if (n) {
+		if (n->left && n->right) {
+			Node* temp = n->left;
+
+			while(temp->right != nullptr) {
+				temp = temp->right;
+			}
+
+			Node* parent_temp = get_parent(temp->element);
+			if (parent_temp == n) parent_temp->left = temp->left;
+			else parent_temp->right = nullptr;
+
+			temp->left = n->left;
+			temp->right = n->right;
+
+			if (parent) {
+				if (parent->left == n) parent->left=temp;
+				else parent->right=temp;
+			}
+			else head = temp;
+
+			delete n;
+			n = nullptr;
+		}
+		else if (n->left) {
+			if (parent) {
+				if (parent->left == n) parent->left=n->left;
+				else parent->right=n->left;
+			}
+			else head = n->left;
+
+			delete n;
+			n = nullptr;
+		}
+		else if (n->right) {
+			if (parent) {
+				if (parent->left == n) parent->left=n->right;
+				else parent->right=n->right;
+			}
+			else head = n->right;
+
+			delete n;
+			n = nullptr;
+		}
+		else {
+			if (parent) {
+				if (parent->left == n) parent->left=nullptr;
+				else parent->right=nullptr;
+			}
+			else head = n;
+
+			delete n;
+			n = nullptr;
+		}
+
+		--count;
+	}
+}
 
 Node* ABR::find_from_node(const Elem& e, Node* n) const {
 	if (n) {
