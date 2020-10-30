@@ -1,13 +1,44 @@
 #include "abr.h"
 #include <queue>
 #include <iostream>
+#include <chrono>
 
 void mult_by_two(Node* n) {
     n->element*=2;
     std::cout << n->element << " ";
 }
 
+const unsigned int NB_ABR = 100;
+
 int main() {
+
+    // ABR tab[NB_ABR];
+    // Elem e;
+
+    // std::chrono::time_point<std::chrono::system_clock> start, end;
+    // start = std::chrono::system_clock::now();
+
+    // srand(time(NULL));
+
+    // for(unsigned int j=0; j<100; ++j) {
+    //     for (unsigned int i=0; i<NB_ABR; ++i) {
+    //         e = rand() % 1000;
+    //         tab[i].insert(e);
+    //     }
+    // }
+
+    // end = std::chrono::system_clock::now();
+    // int elapsed_microseconds
+    // = std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
+
+    // std::cout << "Elapsed Time : " << elapsed_microseconds << std::endl;
+
+    // int elapsed_time_for_one = elapsed_microseconds / NB_ABR;
+
+    // std::cout << "Elapsed For One : " << elapsed_time_for_one << std::endl;
+
+    // tab[1].parcours(0);
+
     ABR a;
 
     a.insert(6);
