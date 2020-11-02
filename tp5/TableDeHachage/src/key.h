@@ -16,6 +16,9 @@ class Key {
 		T get() const;
 		void set(const T& value);
 
+		static unsigned int hash_modulo (const T& k, unsigned int size);
+		static unsigned int rehash_linear (const T& k, unsigned int try_nb);
+
 		friend std::ostream& operator<<(std::ostream& output, const Key<T>& k) { 
 			output << *k.value;
 			return output;
@@ -44,6 +47,12 @@ Key<T>::~Key() {
 		value = nullptr;
 	}
 }
+
+template<class T>
+unsigned int Key<T>::hash_modulo (const T& k, unsigned int size) { return k % size; }
+
+template<class T>
+unsigned int Key<T>::rehash_linear (const T& k, unsigned int try_nb) { return 1; }
 
 template<class T>
 T Key<T>::get() const { return *value; }
