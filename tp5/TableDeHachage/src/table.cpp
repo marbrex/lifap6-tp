@@ -1,48 +1,50 @@
-#include "table.h"
-#include "hash_functions.cpp"
-#include <iostream>
+// #include "table.h"
+// #include <iostream>
 
-Table::Table (unsigned int size) {
-	max_elements = size;
-	nb_elements = 0;
+// unsigned int Table::hash_modulo (const Key& k, unsigned int size) { return k % size; }
 
-	elements = new Case[size];
-	hash = hash_modulo;
-	hash_step = hash_skip_linear;
-}
+// unsigned int Table::rehash_linear (const Key& k, unsigned int try_nb) { return 1; }
 
-Table::~Table () {
-	delete [] elements;
-}
+// Table::Table (unsigned int size, unsigned int (*hash)(const Key&, unsigned int))
+// 	: max_elements(size), nb_elements(0), hash(hash) {
+// 	elements = new Case[size];
+// 	rehash = rehash_linear;
+// }
 
-void Table::add (const Key& key) {
-	assert(nb_elements < max_elements);
+// Table::~Table () { delete [] elements; }
 
-	unsigned int hash_code = hash(key, max_elements);
-	unsigned int try_nb = 1;
+// void Table::add (const Key& key) {
+// 	assert(nb_elements < max_elements);
 
-	while(!elements[hash_code].free) {
-		hash_code += hash_step(key, try_nb++);
-		if(hash_code >= max_elements) {
-			hash_code = hash_code % max_elements;
-		}
-	}
+// 	unsigned int hash_code = hash(key, max_elements);
+// 	unsigned int try_nb = 1;
 
-	if (elements[hash_code].free) {
-		elements[hash_code].key = key;
-		elements[hash_code].free = false;
-		++nb_elements;
-	}
-}
+// 	while(!elements[hash_code].free) {
+// 		hash_code += rehash(key, try_nb++);
+// 		if(hash_code >= max_elements) {
+// 			hash_code = hash_code % max_elements;
+// 		}
+// 	}
 
-void Table::show () const {
-	std::cout << "Maximum elements: " << max_elements << std::endl;
-	std::cout << "Elements stored: " << nb_elements << std::endl;
-	for(unsigned int i=0; i<max_elements; ++i) {
-		if(!elements[i].free) std::cout << "[" << elements[i].key << "]";
-		else std::cout << "[ ]";
+// 	if (elements[hash_code].free) {
+// 		elements[hash_code].key = key;
+// 		elements[hash_code].free = false;
+// 		++nb_elements;
+// 	}
+// }
 
-		if (i==max_elements-1) std::cout << std::endl;
-		else std::cout << "  ";
-	}
-}
+// void Table::show () const {
+// 	std::cout << "Maximum elements: " << max_elements << std::endl;
+// 	std::cout << "Elements stored: " << nb_elements << std::endl;
+// 	for(unsigned int i=0; i<max_elements; ++i) {
+// 		if(!elements[i].free) std::cout << "[" << elements[i].key << "]";
+// 		else std::cout << "[ ]";
+
+// 		if (i==max_elements-1) std::cout << std::endl;
+// 		else std::cout << "  ";
+// 	}
+// }
+
+// void Table::set_hash(unsigned int (*hash)(const Key&, unsigned int)) { this->hash = hash; }
+
+// void Table::set_rehash(unsigned int (*rehash)(const Key&, unsigned int)) { this->rehash = rehash; }

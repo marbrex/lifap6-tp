@@ -1,18 +1,26 @@
 #include "table.h"
+#include <iostream>
+#include <string>
+
+typedef Table<std::string> TableString;
+typedef Info<std::string> InfoString;
 
 int main() {
-    Table t(10);
+    TableString t(20);
 
-    t.add(8);
-    t.add(2);
-    t.add(2);
-    t.add(2);
-    t.add(3);
-    t.add(7);
-    t.add(9);
-    t.add(4);
-    t.add(1);
-    t.add(6);
+    InfoString i;
+    i = std::string("toto");
+
+    InfoString i2("mew");
+    
+    InfoString i3("tata");
+    i3 = std::string("nine");
+
+    t.add(8, i);
+    t.add(3, i);
+    t.add(2, i);
+    t.add(2, i2);
+    t.add(9, i3);
 
     t.show();
 
