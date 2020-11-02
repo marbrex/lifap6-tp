@@ -5,73 +5,75 @@
 #include "key.h"
 #include "info.h"
 
-template<class T>
+template<class K, class T>
 class Table;
 
-template<class T>
+template<class K, class T>
 class Case {
-	friend class Table<T>;
+	friend class Table<K,T>;
 
 	private:
-		Key key;
-		Info<T> info;
 		bool free;
 
 	public:
-		Case() : free(true) {}
-		Case(const Key& k) : key(k), free(false) {}
+		Key<K> key;
+		Info<T> info;
 
-		void set_key(const Key& k) { key=k; free=false; }
-		Key get_key() const { return key; }
+		Case() : free(true) {}
+		Case(const Key<K>& k) : key(k), free(false) {}
 
 		bool isFree() const { return free; }
 };
 
-template<class T>
+template<class K, class T>
 class Table {
 	private:
-		Case<T>* elements;
+		Case<K,T>* elements;
 
 		unsigned int max_elements;
 		unsigned int nb_elements;
 
-		unsigned int (*hash)(const Key&, unsigned int);
-		unsigned int (*rehash)(const Key&, unsigned int);
+		unsigned int (*hash)(const K&, unsigned int);
+		unsigned int (*rehash)(const K&, unsigned int);
 
-		static unsigned int hash_modulo (const Key& k, unsigned int size);
-		static unsigned int rehash_linear (const Key& k, unsigned int try_nb);
+		static unsigned int hash_modulo (const K& k, unsigned int size);
+		static unsigned int rehash_linear (const K& k, unsigned int try_nb);
 
 	public:
-		Table(unsigned int size, unsigned int (*hash)(const Key&, unsigned int)=hash_modulo);
+		Table(unsigned int size, unsigned int (*hash)(const K&, unsigned int)=hash_modulo);
 		~Table();
 
-		void set_hash(unsigned int (*hash)(const Key&, unsigned int));
-		void set_rehash(unsigned int (*rehash)(const Key&, unsigned int));
+		void set_hash(unsigned int (*hash)(const K&, unsigned int));
+		void set_rehash(unsigned int (*rehash)(const K&, unsigned int));
 
-		void add(const Key& e, const Info<T>& info);
+		void add(const K& key, const T& info);
+		void add(const K& key, const Info<T>& info);
+		void add(const Key<K>& key, const Info<T>& info);
+		void add(const Key<K>& key, const T& info);
+
 		void remove(unsigned int hash_code);
 		void show() const;
 
 };
 
-template<class T>
-unsigned int Table<T>::hash_modulo (const Key& k, unsigned int size) { return k % size; }
+template<class K, class T>
+unsigned int Table<K,T>::hash_modulo (const K& k, unsigned int size) { return k % size; }
 
-template<class T>
-unsigned int Table<T>::rehash_linear (const Key& k, unsigned int try_nb) { return 1; }
+template<class K, class T>
+unsigned int Table<K,T>::rehash_linear (const K& k, unsigned int try_nb) { return 1; }
 
-template<class T>
-Table<T>::Table (unsigned int size, unsigned int (*hash)(const Key&, unsigned int))
+template<class K, class T>
+Table<K,T>::Table (unsigned int size, unsigned int (*hash)(const K&, unsigned int))
 	: max_elements(size), nb_elements(0), hash(hash) {
-	elements = new Case<T>[size];
+	elements = new Case<K,T>[size];
 	rehash = rehash_linear;
 }
 
-template<class T>
-Table<T>::~Table () { delete [] elements; }
+template<class K, class T>
+Table<K,T>::~Table () { delete [] elements; }
 
-template<class T>
-void Table<T>::add (const Key& key, const Info<T>& info) {
+template<class K, class T>
+void Table<K,T>::add (const K& key, const T& info) {
 	assert(nb_elements < max_elements);
 
 	unsigned int hash_code = hash(key, max_elements);
@@ -85,15 +87,24 @@ void Table<T>::add (const Key& key, const Info<T>& info) {
 	}
 
 	if (elements[hash_code].free) {
-		elements[hash_code].key = key;
-		elements[hash_code].info.set(info.get());
+		elements[hash_code].key.set(key);
+		elements[hash_code].info.set(info);
 		elements[hash_code].free = false;
 		++nb_elements;
 	}
 }
 
-template<class T>
-void Table<T>::show () const {
+template<class K, class T>
+void Table<K,T>::add (const K& key, const Info<T>& info) { this->add(key,info.get()); }
+
+template<class K, class T>
+void Table<K,T>::add (const Key<K>& key, const Info<T>& info) { this->add(key.get(),info.get()); }
+
+template<class K, class T>
+void Table<K,T>::add (const Key<K>& key, const T& info) { this->add(key.get(),info); }
+
+template<class K, class T>
+void Table<K,T>::show () const {
 	std::cout << "Maximum elements: " << max_elements << std::endl;
 	std::cout << "Elements stored: " << nb_elements << std::endl;
 	for(unsigned int i=0; i<max_elements; ++i) {
@@ -108,10 +119,10 @@ void Table<T>::show () const {
 	}
 }
 
-template<class T>
-void Table<T>::set_hash(unsigned int (*hash)(const Key&, unsigned int)) { this->hash = hash; }
+template<class K, class T>
+void Table<K,T>::set_hash(unsigned int (*hash)(const K&, unsigned int)) { this->hash = hash; }
 
-template<class T>
-void Table<T>::set_rehash(unsigned int (*rehash)(const Key&, unsigned int)) { this->rehash = rehash; }
+template<class K, class T>
+void Table<K,T>::set_rehash(unsigned int (*rehash)(const K&, unsigned int)) { this->rehash = rehash; }
 
 #endif

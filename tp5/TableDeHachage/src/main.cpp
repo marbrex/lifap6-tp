@@ -2,25 +2,31 @@
 #include <iostream>
 #include <string>
 
-typedef Table<std::string> TableString;
+typedef Table<unsigned int,std::string> Table_;
 typedef Info<std::string> InfoString;
+typedef Key<unsigned int> KeyInt;
 
 int main() {
-    TableString t(20);
+    Table_ t(20);
 
-    InfoString i;
-    i = std::string("toto");
+    // KeyInt k;
+    // k = 8;
+    // InfoString i;
+    // i = std::string("toto");
 
-    InfoString i2("mew");
+    // KeyInt k2(2);
+    // InfoString i2("mew");
     
-    InfoString i3("tata");
-    i3 = std::string("nine");
+    // KeyInt k3(234);
+    // k3 = 9;
+    // InfoString i3("tata");
+    // i3 = std::string("nine");
 
-    t.add(8, i);
-    t.add(3, i);
-    t.add(2, i);
-    t.add(2, i2);
-    t.add(9, i3);
+    t.add(8, std::string("toto"));
+    t.add(8, std::string("toto"));
+    t.add(2, std::string("toto"));
+    t.add(2, std::string("mew"));
+    t.add(9, std::string("nine"));
 
     t.show();
 
