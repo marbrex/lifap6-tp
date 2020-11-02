@@ -37,7 +37,9 @@ class Table {
 		unsigned int (*rehash)(const K&, unsigned int);
 
 	public:
-		Table(unsigned int size, unsigned int (*hash)(const K&, unsigned int)=Key<K>::hash_modulo);
+		Table(unsigned int size,
+		      unsigned int (*hash)(const K&, unsigned int)=Key<K>::hash_modulo,
+		      unsigned int (*rehash)(const K&, unsigned int)=Key<K>::rehash_linear);
 		~Table();
 
 		void set_hash(unsigned int (*hash)(const K&, unsigned int));
@@ -54,10 +56,11 @@ class Table {
 };
 
 template<class K, class I>
-Table<K,I>::Table (unsigned int size, unsigned int (*hash)(const K&, unsigned int))
-	: max_elements(size), nb_elements(0), hash(hash) {
+Table<K,I>::Table (unsigned int size,
+				   unsigned int (*hash)(const K&, unsigned int),
+				   unsigned int (*rehash)(const K&, unsigned int))
+				   : max_elements(size), nb_elements(0), hash(hash), rehash(rehash) {
 	elements = new Case<K,I>[size];
-	rehash = Key<K>::rehash_linear;
 }
 
 template<class K, class I>
