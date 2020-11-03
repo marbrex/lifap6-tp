@@ -8,7 +8,7 @@
 template<class K, class I>
 class Table;
 
-//====================== Case ===========================
+//====================== Case Definition ===========================
 template<class K, class I>
 class Case {
 	friend class Table<K,I>;
@@ -19,24 +19,45 @@ class Case {
 		bool free;
 
 	public:
-		Case() : free(true) {}
-		Case(const Key<K>& k) : key(k), free(false) {}
+		Case();
+		Case(const Key<K>& k);
 
-		Key<K> get_key() const { return key; }
-		Info<I> get_info() const { return info; }
+		Key<K> get_key() const;
+		Info<I> get_info() const;
 
-		bool isFree() const { return free; }
+		bool isFree() const;
 
-		void draw() const {
-			if(!free) {
-				unsigned int try_count = key.get_try_count();
-				std::cout << key << "	⏵ " << info;
-				std::cout << " (" << try_count << (try_count==1 ? " try" : " tries") << ")" << std::endl;
-			}
-		}
+		void draw() const;
 };
 
-// ======================== Table ==========================
+//====================== Case Implementation ===========================
+template<class K, class I>
+Case<K,I>::Case() : free(true) {}
+
+template<class K, class I>
+Case<K,I>::Case(const Key<K>& k) : key(k), free(false) {}
+
+template<class K, class I>
+Key<K> Case<K,I>::get_key() const { return key; }
+
+template<class K, class I>
+Info<I> Case<K,I>::get_info() const { return info; }
+
+template<class K, class I>
+bool Case<K,I>::isFree() const { return free; }
+
+template<class K, class I>
+void Case<K,I>::draw() const {
+	if(!free) {
+		unsigned int try_count = key.get_try_count();
+		std::cout << key << "	⏵ " << info;
+		std::cout << " (" << try_count << (try_count==1 ? " try" : " tries") << ")" << std::endl;
+	}
+}
+
+
+
+// ======================== Table Definition ==========================
 template<class K, class I>
 class Table {
 	private:
@@ -79,6 +100,7 @@ class Table {
 
 };
 
+// ======================== Table Implementation ==========================
 template<class K, class I>
 Table<K,I>::Table (unsigned int size,
 				   unsigned int (*hash)(const K&, unsigned int),
