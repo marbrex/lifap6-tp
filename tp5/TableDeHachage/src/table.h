@@ -157,24 +157,23 @@ void Table<K,I>::add (const K& key, const I& info) {
 
 	unsigned int hash_code = hash(key, max_elements);
 
-	if(!elements[hash_code].free)
-		assert(elements[hash_code].key != key);
+	if (elements[hash_code].key.get() != key) {
+		unsigned int try_nb = 1;
 
-	unsigned int try_nb = 1;
-
-	while(!elements[hash_code].free) {
-		hash_code += rehash(key, try_nb++);
-		if(hash_code >= max_elements) {
-			hash_code = hash_code % max_elements;
+		while(!elements[hash_code].free) {
+			hash_code += rehash(key, try_nb++);
+			if(hash_code >= max_elements) {
+				hash_code = hash_code % max_elements;
+			}
 		}
-	}
 
-	if (elements[hash_code].free) {
-		elements[hash_code].key.set(key);
-		elements[hash_code].key.set_try_count(try_nb);
-		elements[hash_code].info.set(info);
-		elements[hash_code].free = false;
-		++nb_elements;
+		if (elements[hash_code].free) {
+			elements[hash_code].key.set(key);
+			elements[hash_code].key.set_try_count(try_nb);
+			elements[hash_code].info.set(info);
+			elements[hash_code].free = false;
+			++nb_elements;
+		}
 	}
 }
 
@@ -223,7 +222,7 @@ unsigned int Table<K,I>::find(const K& key) const {
 
 	assert(!elements[index].free);
 	
-	while (elements[index].key != key)
+	while (elements[index].key.get() != key)
 		index += rehash(key, max_elements);
 	
 	return index;
