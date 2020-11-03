@@ -8,6 +8,7 @@
 template<class K, class I>
 class Table;
 
+//====================== Case ===========================
 template<class K, class I>
 class Case {
 	friend class Table<K,I>;
@@ -25,8 +26,17 @@ class Case {
 		Info<I> get_info() const { return info; }
 
 		bool isFree() const { return free; }
+
+		void draw() const {
+			if(!free) {
+				unsigned int try_count = key.get_try_count();
+				std::cout << key << "	⏵ " << info;
+				std::cout << " (" << try_count << (try_count==1 ? " try" : " tries") << ")" << std::endl;
+			}
+		}
 };
 
+// ======================== Table ==========================
 template<class K, class I>
 class Table {
 	private:
@@ -52,10 +62,17 @@ class Table {
 		void add(const Key<K>& key, const Info<I>& info);
 		void add(const Key<K>& key, const I& info);
 
-		Info<I> find(const K& key) const;
-		Info<I> find(const Key<K>& key) const;
+		Info<I> get_info(const K& key) const;
+		Info<I> get_info(const Key<K>& key) const;
 
-		void show() const;
+		unsigned int find(const K& key) const;
+		unsigned int find(const Key<K>& key) const;
+
+		void remove(const K& key);
+
+		Info<I> operator[](const K& key) const;
+
+		void show(bool extra=false) const;
 
 };
 
@@ -77,7 +94,7 @@ void Table<K,I>::add (const K& key, const I& info) {
 	unsigned int hash_code = hash(key, max_elements);
 
 	if(!elements[hash_code].free)
-		assert(elements[hash_code].key.get() != key);
+		assert(elements[hash_code].key != key);
 
 	unsigned int try_nb = 1;
 
@@ -107,21 +124,18 @@ template<class K, class I>
 void Table<K,I>::add (const Key<K>& key, const I& info) { this->add(key.get(),info); }
 
 template<class K, class I>
-void Table<K,I>::show () const {
-	std::cout << "Maximum elements: " << max_elements << std::endl;
-	std::cout << "Elements stored: " << nb_elements << std::endl;
-	for(unsigned int i=0; i<max_elements; ++i) {
-		if(!elements[i].free) {
-			std::cout << "[" << elements[i].key << "->";
-			std::cout << elements[i].info << "]";
-			// std::cout << elements[i].info << "->";
-			// std::cout << elements[i].key.get_try_count() << "]";
-		}
-		else std::cout << "[ ]";
-
-		if (i==max_elements-1) std::cout << std::endl;
-		else std::cout << "  ";
+void Table<K,I>::show (bool extra) const {
+	if (extra) {
+		std::cout << "Maximum elements: " << max_elements << std::endl;
+		std::cout << "Elements stored: " << nb_elements << std::endl;
 	}
+	std::cout << "========== Table State ========== \n";
+	std::cout << "#INDEX	KEY	⏵ INFO\n";
+	for(unsigned int i=0; i<max_elements; ++i) {
+		if(!elements[i].free) std::cout << "#" << i << "	";
+		elements[i].draw();
+	}
+	std::cout << "================================= \n";
 }
 
 template<class K, class I>
@@ -131,18 +145,38 @@ template<class K, class I>
 void Table<K,I>::set_rehash(unsigned int (*rehash)(const K&, unsigned int)) { this->rehash = rehash; }
 
 template<class K, class I>
-Info<I> Table<K,I>::find(const K& key) const {
-	unsigned int index = hash(key, max_elements);
-
-	assert(!elements[index].free);
-	
-	while (elements[index].key.get() != key)
-		index += rehash(key, max_elements);
-	
+Info<I> Table<K,I>::get_info(const K& key) const {
+	unsigned int index = find(key);
 	return elements[index].info;
 }
 
 template<class K, class I>
-Info<I> Table<K,I>::find(const Key<K>& key) const { return find(key.get()); }
+Info<I> Table<K,I>::get_info(const Key<K>& key) const { return get_info(key.get()); }
+
+template<class K, class I>
+unsigned int Table<K,I>::find(const K& key) const {
+	unsigned int index = hash(key, max_elements);
+
+	assert(!elements[index].free);
+	
+	while (elements[index].key != key)
+		index += rehash(key, max_elements);
+	
+	return index;
+}
+
+template<class K, class I>
+unsigned int Table<K,I>::find(const Key<K>& key) const { return find(key.get()); }
+
+template<class K, class I>
+void Table<K,I>::remove(const K& key) {
+	unsigned int index = find(key);
+
+	elements[index].free = true;
+	--nb_elements;
+}
+
+template<class K, class I>
+Info<I> Table<K,I>::operator[](const K& key) const { return get_info(key); }
 
 #endif

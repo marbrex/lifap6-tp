@@ -2,6 +2,7 @@
 #define _INFO
 
 #include <iostream>
+#include <assert.h>
 
 template<class T>
 class Info {
@@ -19,6 +20,13 @@ class Info {
 		bool isEmpty() const;
 
 		Info<T>& operator=(const Info<T>& info);
+		Info<T>& operator=(const T& info);
+
+		bool operator==(const Info<T>& info) const;
+		bool operator==(const T& info) const;
+
+		bool operator!=(const Info<T>& info) const;
+		bool operator!=(const T& info) const;
 
 		friend std::ostream& operator<<(std::ostream& output, const Info<T>& i) { 
 			output << i.value;
@@ -26,9 +34,7 @@ class Info {
 		}
 
 		friend std::istream& operator>>(std::istream& input, Info<T>& i) {
-			T temp;
-			input >> temp;
-			i.value = temp;
+			input >> i.value;
 			return input;
 		}
 };
@@ -53,8 +59,38 @@ bool Info<T>::isEmpty() const { return empty; }
 
 template<class T>
 Info<T>& Info<T>::operator=(const Info<T>& info) {
-	this->value = info.value;
+	set(info.value);
 	return *this;
+}
+
+template<class T>
+Info<T>& Info<T>::operator=(const T& info) {
+	set(info);
+	return *this;
+}
+
+template<class T>
+bool Info<T>::operator==(const Info<T>& info) const {
+	assert(!empty && !info.empty);
+	return this->value == info.value;
+}
+
+template<class T>
+bool Info<T>::operator==(const T& info) const {
+	assert(!empty);
+	return this->value == info;
+}
+
+template<class T>
+bool Info<T>::operator!=(const Info<T>& info) const {
+	assert(!empty && !info.empty);
+	return this->value != info.value;
+}
+
+template<class T>
+bool Info<T>::operator!=(const T& info) const {
+	assert(!empty);
+	return this->value != info;
 }
 
 #endif

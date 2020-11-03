@@ -26,10 +26,15 @@ int main() {
     t.add(2, std::string("mew"));
     t.add(9, std::string("nine"));
 
+    t.show(true);
+
+    std::cout << "Info of 9: " << t[9] << std::endl;
+
+    t.remove(2);
     t.show();
 
-    InfoString s = t.find(9);
-    std::cout << "Info of 9: " << s << std::endl;
+    t.add(2, std::string("tata"));
+    t.show();
 
     return 0;
 }

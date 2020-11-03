@@ -20,6 +20,13 @@ class Key {
 		bool isEmpty() const;
 
 		Key<T>& operator=(const Key<T>& key);
+		Key<T>& operator=(const T& key);
+
+		bool operator==(const Key<T>& key) const;
+		bool operator==(const T& key) const;
+
+		bool operator!=(const Key<T>& key) const;
+		bool operator!=(const T& key) const;
 
 		unsigned int get_try_count() const;
 		void set_try_count(unsigned int nb);
@@ -33,9 +40,7 @@ class Key {
 		}
 
 		friend std::istream& operator>>(std::istream& input, Key<T>& k) {
-			T temp;
-			input >> temp;
-			k.value = temp;
+			input >> k.value;
 			return input;
 		}
 };
@@ -59,7 +64,10 @@ template<class T>
 T Key<T>::get() const { return value; }
 
 template<class T>
-void Key<T>::set(const T& val) { this->value = val; }
+void Key<T>::set(const T& val) {
+	this->value = val;
+	empty = false;
+}
 
 template<class T>
 unsigned int Key<T>::get_try_count() const { return try_count; }
@@ -69,8 +77,38 @@ void Key<T>::set_try_count(unsigned int nb) { try_count = nb; }
 
 template<class T>
 Key<T>& Key<T>::operator=(const Key<T>& key) {
-	this->value = key.value;
+	set(key.value);
 	return *this;
+}
+
+template<class T>
+Key<T>& Key<T>::operator=(const T& key) {
+	set(key);
+	return *this;
+}
+
+template<class T>
+bool Key<T>::operator==(const Key<T>& key) const {
+	assert(!empty && !key.empty);
+	return this->value == key.value;
+}
+
+template<class T>
+bool Key<T>::operator==(const T& key) const {
+	assert(!empty);
+	return this->value == key;
+}
+
+template<class T>
+bool Key<T>::operator!=(const Key<T>& key) const {
+	assert(!empty && !key.empty);
+	return this->value != key.value;
+}
+
+template<class T>
+bool Key<T>::operator!=(const T& key) const {
+	assert(!empty);
+	return this->value != key;
 }
 
 #endif
