@@ -23,12 +23,13 @@ int main() {
     // i3 = std::string("nine");
 
     t.add(8, std::string("toto"));
-    t.add(8, std::string("toto"));
-    t.add(2, std::string("toto"));
     t.add(2, std::string("mew"));
     t.add(9, std::string("nine"));
 
     t.show();
+
+    InfoString s = t.find(9);
+    std::cout << "Info of 9: " << s << std::endl;
 
     return 0;
 }

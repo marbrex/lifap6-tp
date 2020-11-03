@@ -13,14 +13,16 @@ class Case {
 	friend class Table<K,I>;
 
 	private:
+		Key<K> key;
+		Info<I> info;
 		bool free;
 
 	public:
-		Key<K> key;
-		Info<I> info;
-
 		Case() : free(true) {}
 		Case(const Key<K>& k) : key(k), free(false) {}
+
+		Key<K> get_key() const { return key; }
+		Info<I> get_info() const { return info; }
 
 		bool isFree() const { return free; }
 };
@@ -50,7 +52,9 @@ class Table {
 		void add(const Key<K>& key, const Info<I>& info);
 		void add(const Key<K>& key, const I& info);
 
-		void remove(unsigned int hash_code);
+		Info<I> find(const K& key) const;
+		Info<I> find(const Key<K>& key) const;
+
 		void show() const;
 
 };
@@ -64,13 +68,17 @@ Table<K,I>::Table (unsigned int size,
 }
 
 template<class K, class I>
-Table<K,I>::~Table () { delete [] elements; }
+Table<K,I>::~Table () { delete [] elements; elements = nullptr; }
 
 template<class K, class I>
 void Table<K,I>::add (const K& key, const I& info) {
 	assert(nb_elements < max_elements);
 
 	unsigned int hash_code = hash(key, max_elements);
+
+	if(!elements[hash_code].free)
+		assert(elements[hash_code].key.get() != key);
+
 	unsigned int try_nb = 1;
 
 	while(!elements[hash_code].free) {
@@ -82,6 +90,7 @@ void Table<K,I>::add (const K& key, const I& info) {
 
 	if (elements[hash_code].free) {
 		elements[hash_code].key.set(key);
+		elements[hash_code].key.set_try_count(try_nb);
 		elements[hash_code].info.set(info);
 		elements[hash_code].free = false;
 		++nb_elements;
@@ -105,6 +114,8 @@ void Table<K,I>::show () const {
 		if(!elements[i].free) {
 			std::cout << "[" << elements[i].key << "->";
 			std::cout << elements[i].info << "]";
+			// std::cout << elements[i].info << "->";
+			// std::cout << elements[i].key.get_try_count() << "]";
 		}
 		else std::cout << "[ ]";
 
@@ -118,5 +129,20 @@ void Table<K,I>::set_hash(unsigned int (*hash)(const K&, unsigned int)) { this->
 
 template<class K, class I>
 void Table<K,I>::set_rehash(unsigned int (*rehash)(const K&, unsigned int)) { this->rehash = rehash; }
+
+template<class K, class I>
+Info<I> Table<K,I>::find(const K& key) const {
+	unsigned int index = hash(key, max_elements);
+
+	assert(!elements[index].free);
+	
+	while (elements[index].key.get() != key)
+		index += rehash(key, max_elements);
+	
+	return elements[index].info;
+}
+
+template<class K, class I>
+Info<I> Table<K,I>::find(const Key<K>& key) const { return find(key.get()); }
 
 #endif
