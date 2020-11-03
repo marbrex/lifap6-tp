@@ -1,9 +1,16 @@
+// Eldar Kasmamytov
+
 #ifndef _TABLE
 #define _TABLE
 
 #include <assert.h>
 #include "key.h"
 #include "info.h"
+
+// Attention!
+// La definition et l'implementation des classes sont dans le meme fichier,
+// car ce sont des classes TEMPLATE, en consequence on peut pas diviser
+// le definition et l'implementation en deux fichiers.
 
 template<class K, class I>
 class Table;
@@ -16,17 +23,23 @@ class Case {
 	private:
 		Key<K> key;
 		Info<I> info;
-		bool free;
+		bool free;	// Indique si la case est libre ou pas
 
 	public:
 		Case();
 		Case(const Key<K>& k);
 
+		// Resultat: cle contenue dans la case.
 		Key<K> get_key() const;
+
+		// Resultat: info contenu dans la case.
 		Info<I> get_info() const;
 
+		// Resultat: True si la case est libre,
+		//			 False sinon.
 		bool isFree() const;
 
+		// Postcondition: L'etat interne de la case est affiche dans le terminal.
 		void draw() const;
 };
 
@@ -63,39 +76,65 @@ class Table {
 	private:
 		Case<K,I>* elements;
 
-		unsigned int max_elements;
-		unsigned int nb_elements;
+		unsigned int max_elements; // Le nombre maximum d'elements qu'on peut inserer (taille de la Table)
+		unsigned int nb_elements; // Le nombre effectif d'elements presents dans la Table
 
 		unsigned int (*hash)(const K&, unsigned int);
 		unsigned int (*rehash)(const K&, unsigned int);
 
 	public:
+		// Preconditions: * size=taille de la Table a creer
+		//				  * hash=pointeur vers la fonction de hachage
+		//					(Key<K>::hash_modulo par defaut)
+		//				  * rehash=pointeur vers la fonction de rehachage
+		//					(Key<K>::rehash_linear par defaut)
 		Table(unsigned int size,
 		      unsigned int (*hash)(const K&, unsigned int)=Key<K>::hash_modulo,
 		      unsigned int (*rehash)(const K&, unsigned int)=Key<K>::rehash_linear);
 		~Table();
 
+		// Preconditions: hash=pointeur vers la fonction de hachage
+		// Postcondition: hash est affecte a la donnee membre hash
 		void set_hash(unsigned int (*hash)(const K&, unsigned int));
+
+		// Preconditions: rehash=pointeur vers la fonction de rehachage
+		// Postcondition: rehash est affecte a la donnee membre rehash
 		void set_rehash(unsigned int (*rehash)(const K&, unsigned int));
 
+		// Preconditions: * La taille effective de la Table doit etre inferieure
+		//					a la taille maximale,
+		//					sinon le reste du code n'est pas execute (assert)
+		//				  * Key doit etre unique,
+		//					sinon le reste du code n'est pas execute (assert)
+		// Postcondition: 'key' et 'info' sont inseres dans la case, dont
+		//				  l'indexe est calcule par la fonction 'hash'
 		void add(const K& key, const I& info);
 		void add(const K& key, const Info<I>& info);
 		void add(const Key<K>& key, const Info<I>& info);
 		void add(const Key<K>& key, const I& info);
 
+		// Resultat: L'information associee a la cle 'key'
 		Info<I> get_info(const K& key) const;
 		Info<I> get_info(const Key<K>& key) const;
 
+		// Postcondition: L'information associee a la cle 'key'
+		//				  est mise a jour avec 'info'
 		void set_info(const K& key, const I& info);
 		void set_info(const Key<K>& key, const Info<I>& info);
 
+		// Resultat: L'indexe de la case, dont la cle est identique a 'key'
 		unsigned int find(const K& key) const;
 		unsigned int find(const Key<K>& key) const;
 
+		// Postcondition: La case dont la cle est 'key'
+		//				  est liberee
 		void remove(const K& key);
 
+		// Resultat: L'information associee a la cle 'key'
 		Info<I> operator[](const K& key) const;
 
+		// Preconditions: extra=afficher ou pas l'information supplementaire
+		// Postcondition: L'etat interne de la Table est affiche dans la console
 		void show(bool extra=false) const;
 
 };
