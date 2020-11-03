@@ -65,6 +65,9 @@ class Table {
 		Info<I> get_info(const K& key) const;
 		Info<I> get_info(const Key<K>& key) const;
 
+		void set_info(const K& key, const I& info);
+		void set_info(const Key<K>& key, const Info<I>& info);
+
 		unsigned int find(const K& key) const;
 		unsigned int find(const Key<K>& key) const;
 
@@ -178,5 +181,17 @@ void Table<K,I>::remove(const K& key) {
 
 template<class K, class I>
 Info<I> Table<K,I>::operator[](const K& key) const { return get_info(key); }
+
+template<class K, class I>
+void Table<K,I>::set_info(const K& key, const I& info) {
+	unsigned int index = find(key);
+	elements[index].info = info;
+}
+
+template<class K, class I>
+void Table<K,I>::set_info(const Key<K>& key, const Info<I>& info) {
+	unsigned int index = find(key);
+	elements[index].info = info;
+}
 
 #endif

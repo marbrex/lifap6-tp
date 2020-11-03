@@ -36,5 +36,8 @@ int main() {
     t.add(2, std::string("tata"));
     t.show();
 
+    t.set_info(9, "domik");
+    t.show();
+
     return 0;
 }
