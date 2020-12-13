@@ -1,20 +1,22 @@
-# Files and Directories
+# Directories
 BIN = bin
 SRC = src
 OBJ = obj
 
-exec = executable.out
+# Files
+exec = $(BIN)/executable.out
 objects = $(OBJ)/main.o $(OBJ)/graph.o $(OBJ)/element.o
 
 # Commands
 create_OBJ_if_doesnt_exist = if [ ! -d "./$(OBJ)" ]; then mkdir $(OBJ); fi;
+create_BIN_if_doesnt_exist = if [ ! -d "./$(BIN)" ]; then mkdir $(BIN); fi;
 
-# Makefile
-all : $(BIN)/$(exec)
+# Makefile Rules
+all : $(exec)
 
-$(BIN)/$(exec) : $(objects)
-	if [ ! -d "./$(BIN)" ]; then mkdir $(BIN); fi;
-	g++ -Wall -g $(objects) -o $(BIN)/$(exec)
+$(exec) : $(objects)
+	$(create_BIN_if_doesnt_exist)
+	g++ -Wall -g $(objects) -o $(exec)
 
 $(OBJ)/main.o : $(SRC)/main.cpp $(SRC)/graph.h
 	$(create_OBJ_if_doesnt_exist)
@@ -28,6 +30,7 @@ $(OBJ)/element.o : $(SRC)/element.h $(SRC)/element.cpp
 	$(create_OBJ_if_doesnt_exist)
 	g++ -Wall -g -c $(SRC)/element.cpp -o $(OBJ)/element.o
 
+# -f (--force) -> doesn't throw an error if files don't exist
 clean :
 	rm -f $(OBJ)/*
 
