@@ -2,42 +2,84 @@
 #include <queue>
 #include <iostream>
 #include <chrono>
+#include <fstream>
 
 void mult_by_two(Node* n) {
     n->element*=2;
     std::cout << n->element << " ";
 }
 
-const unsigned int NB_ABR = 100;
+
+
+int measure_performance(unsigned int size_of_each_tree, unsigned int number_of_trees) {
+    ABR tab[number_of_trees];
+    Elem e;
+
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
+
+    srand(time(NULL));
+
+    for(unsigned int j=0; j<size_of_each_tree; ++j) {
+        for (unsigned int i=0; i<number_of_trees; ++i) {
+            e = rand() % 1000;
+            tab[i].insert(e);
+        }
+    }
+
+    end = std::chrono::system_clock::now();
+    return std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
+}
+
+
 
 int main() {
+    unsigned int repeat_times;
 
-    // ABR tab[NB_ABR];
-    // Elem e;
+    std::cout << "How many performance measurements do you want to make? ";
+    std::cin >> repeat_times;
+    std::cout << std::endl;
 
-    // std::chrono::time_point<std::chrono::system_clock> start, end;
-    // start = std::chrono::system_clock::now();
+    for (unsigned int i=0; i<repeat_times; ++i) {
+        std::cout << "===== " << i+1 << " Measurement =====\n";
 
-    // srand(time(NULL));
+        unsigned int size_of_each_tree;
+        unsigned int number_of_trees;
 
-    // for(unsigned int j=0; j<100; ++j) {
-    //     for (unsigned int i=0; i<NB_ABR; ++i) {
-    //         e = rand() % 1000;
-    //         tab[i].insert(e);
-    //     }
-    // }
+        std::cout << "How many insertions for 1 tree? ";
+        std::cin >> size_of_each_tree;
 
-    // end = std::chrono::system_clock::now();
-    // int elapsed_microseconds
-    // = std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
+        std::cout << "Number of trees? ";
+        std::cin >> number_of_trees;
 
-    // std::cout << "Elapsed Time : " << elapsed_microseconds << std::endl;
+        std::cout << "Mesuring performance..." << std::endl;
 
-    // int elapsed_time_for_one = elapsed_microseconds / NB_ABR;
+        int elapsed_microseconds = measure_performance(size_of_each_tree, number_of_trees);
+        std::cout << "Elapsed Time: " << elapsed_microseconds << " microseconds" << std::endl;
 
-    // std::cout << "Elapsed For One : " << elapsed_time_for_one << std::endl;
+        int elapsed_time_for_one = elapsed_microseconds / number_of_trees;
+        std::cout << "Elapsed For One: " << elapsed_time_for_one << " microseconds" << std::endl;
 
-    // tab[1].parcours(0);
+        if (i==0) {
+            std::ofstream file("data/performance.txt");
+            if (file.is_open()) file << "# \"Nb Trees\" \"Time\"\n";
+            file.close();
+        }
+        std::ofstream file("data/performance.txt", std::ios::app);
+
+        if (file.is_open()) {
+            file << number_of_trees << " " << elapsed_microseconds << "\n";
+            file.close();
+        }
+        else std::cout << "Can not open 'data/performance.txt' file\n";
+
+        std::cout << "=========================\n" << std::endl;
+    }
+
+
+
+    // Demonstration des fonctionnalites du module
+    std::cout << "========== Demonstration des fonctionnalites du module ==========\n";
 
     ABR a;
 
